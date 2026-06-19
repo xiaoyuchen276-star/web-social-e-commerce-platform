@@ -1,0 +1,39 @@
+// Element Plus 品牌色覆盖
+.el-input__inner:focus {
+  border: 1px solid #F63;
+}
+
+.el-radio__input.is-checked .el-radio__inner {
+  border-color: #F63;
+  background: #F63;
+}
+
+.el-radio__input.is-checked + .el-radio__label {
+  color: #F63;
+}
+
+// Tabs 高度控制（个人主页使用）
+.el-tabs, .el-tab-pane {
+  height: 100%;
+}
+
+.el-tabs__header {
+  height: 10%;
+}
+
+.el-tabs__content {
+  height: 90%;
+}
+
+// Tabs 第二个 item 左内边距
+.el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2),
+.el-tabs--bottom .el-tabs__item.is-top:nth-child(2),
+.el-tabs--top .el-tabs__item.is-bottom:nth-child(2),
+.el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+  padding-left: 15px;
+}
+
+// 输入框圆角
+.el-input__inner {
+  border-radius: 20px;
+}
