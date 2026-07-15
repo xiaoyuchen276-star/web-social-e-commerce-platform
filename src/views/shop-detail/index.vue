@@ -2,7 +2,7 @@
   <div class="shop-detail-container">
     <AppHeader :show-share="true" />
 
-    <div style="padding-top: 40px">
+    <div class="shop-detail-content">
       <!-- 商户基本信息 -->
       <div class="shop-info-box">
         <div class="shop-title">{{ shop.name }}</div>
@@ -238,6 +238,10 @@ onMounted(() => {
 <style lang="scss" scoped>
 .shop-info-box {
   padding: 0 10px;
+}
+
+.shop-detail-content {
+  padding-top: 0;
 }
 
 .shop-title {
@@ -545,6 +549,60 @@ onMounted(() => {
     width: 92px;
     border-radius: 5px;
     margin-right: 5px;
+  }
+}
+
+@media (min-width: 768px) {
+  .shop-detail-content {
+    width: min(100%, 960px);
+    margin: 0 auto;
+    padding: 20px 28px 36px;
+  }
+
+  .shop-info-box,
+  .shop-voucher,
+  .shop-comments {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .shop-images {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    overflow: visible;
+    gap: 10px;
+
+    img {
+      width: 100%;
+      height: 180px;
+      margin: 0;
+      object-fit: cover;
+    }
+  }
+
+  .voucher-box {
+    width: calc(50% - 8px);
+    display: inline-flex;
+    vertical-align: top;
+    min-height: 130px;
+    margin: 8px 4px;
+  }
+
+  .comment-tags {
+    justify-content: flex-start;
+    gap: 10px;
+
+    .tag {
+      width: auto;
+      min-width: 140px;
+      margin-top: 0;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .shop-images {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 </style>

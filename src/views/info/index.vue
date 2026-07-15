@@ -20,7 +20,7 @@
     </div>
 
     <div class="content">
-      <el-tabs v-model="activeName" @tab-click="handleTabClick">
+      <el-tabs class="profile-tabs" v-model="activeName" @tab-click="handleTabClick">
         <el-tab-pane label="笔记" name="1">
           <div v-for="b in blogs" :key="b.id" class="blog-item">
             <div class="blog-img"><img :src="b.images.split(',')[0]" alt="" /></div>
@@ -193,6 +193,33 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   padding: 15px 15px 5px 15px;
+}
+
+@media (min-width: 768px) {
+  .basic,
+  .introduce,
+  .content {
+    max-width: 900px;
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .basic {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .follow-blog-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .follow-blog-box {
+    width: 100%;
+    margin: 0;
+  }
 }
 
 .basic-icon {

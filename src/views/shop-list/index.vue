@@ -140,7 +140,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-#app {
+.shop-list-container {
   background-color: #f1f1f1;
 }
 
@@ -152,7 +152,8 @@ onMounted(() => {
 
 .header {
   width: 100%;
-  height: 7%;
+  min-height: var(--app-header-height);
+  height: var(--app-header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -190,7 +191,8 @@ onMounted(() => {
 .sort-bar {
   display: flex;
   justify-content: space-around;
-  height: 6%;
+  min-height: 48px;
+  height: 48px;
   align-items: center;
   margin-bottom: 5px;
 }
@@ -203,7 +205,7 @@ onMounted(() => {
 }
 
 .shop-list {
-  height: 87%;
+  height: calc(100% - var(--app-header-height) - 53px);
   background-color: #f1f1f1;
   overflow-y: auto;
 }
@@ -229,7 +231,8 @@ onMounted(() => {
 }
 
 .shop-info {
-  width: 65%;
+  flex: 1;
+  min-width: 0;
 }
 
 .shop-title {
@@ -263,5 +266,72 @@ onMounted(() => {
   height: 20px;
   line-height: 20px;
   overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding: 0 24px;
+  }
+
+  .header-back-btn,
+  .header-search {
+    width: 8%;
+  }
+
+  .header-title {
+    width: 84%;
+  }
+
+  .sort-bar {
+    justify-content: center;
+    gap: 48px;
+  }
+
+  .sort-item {
+    width: auto;
+    min-width: 96px;
+    font-size: 14px;
+  }
+
+  .shop-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 14px;
+    padding: 18px 24px;
+  }
+
+  .shop-box {
+    min-width: 0;
+    margin-bottom: 0;
+    padding: 14px;
+    border: 1px solid #ececec;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .shop-img img {
+    width: 112px;
+    height: 112px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .shop-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .shop-box {
+    display: block;
+  }
+
+  .shop-img {
+    padding: 0 0 12px;
+  }
+
+  .shop-img img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
 }
 </style>

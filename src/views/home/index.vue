@@ -111,12 +111,19 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.home-container {
+  display: grid;
+  grid-template-rows: var(--app-header-height) 184px minmax(0, 1fr) var(--app-footer-height);
+  height: 100%;
+}
+
 .search-bar {
   background-color: #ff6633;
   color: white;
   display: flex;
   justify-content: space-around;
-  height: 7%;
+  min-height: var(--app-header-height);
+  height: auto;
   align-items: center;
   padding: 0 8px;
 }
@@ -139,15 +146,16 @@ onMounted(() => {
 }
 
 .type-list {
-  height: 25%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-content: start;
+  gap: 4px 8px;
+  padding: 10px 8px;
   box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .type-box {
-  width: 17%;
+  width: auto;
   text-align: center;
   cursor: pointer;
 }
@@ -160,7 +168,7 @@ onMounted(() => {
   color: #111;
   font-size: 10px;
   margin-top: -8px;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 .blog-list {
@@ -168,8 +176,65 @@ onMounted(() => {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  align-content: start;
   justify-content: space-around;
-  height: 60%;
+  height: auto;
+  padding: 12px 10px;
   overflow-y: auto;
+}
+
+:deep(.foot) {
+  position: static;
+  grid-row: 4;
+}
+
+@media (min-width: 768px) {
+  .home-container {
+    grid-template-rows: var(--app-header-height) 212px minmax(0, 1fr) var(--app-footer-height);
+  }
+
+  .search-bar {
+    justify-content: center;
+    gap: 20px;
+    padding: 0 28px;
+  }
+
+  .search-input {
+    width: min(70%, 620px);
+  }
+
+  .type-list {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px 24px;
+    padding: 16px 32px;
+  }
+
+  .type-box img {
+    max-width: 88px;
+    margin: 0 auto;
+  }
+
+  .type-text {
+    margin-top: -4px;
+    font-size: 12px;
+  }
+
+  .blog-list {
+    justify-content: space-between;
+    gap: 0 16px;
+    padding: 20px 28px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .type-box img {
+    max-width: 66px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .type-list {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
 }
 </style>

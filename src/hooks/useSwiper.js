@@ -1,4 +1,4 @@
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 
 /**
  * 触摸滑动组合式函数（从原 blog-detail.html 迁移）
@@ -104,6 +104,11 @@ export function useSwiper(containerRef, itemCount) {
     nextTick(() => {
       updateWidth()
     })
+    window.addEventListener('resize', updateWidth)
+  })
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateWidth)
   })
 
   return {

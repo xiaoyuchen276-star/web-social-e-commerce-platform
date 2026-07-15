@@ -325,7 +325,7 @@ textarea:focus {
   position: absolute;
   z-index: 999;
   bottom: 0;
-  height: 500px;
+  height: min(500px, 78dvh);
   width: 100%;
   background-color: #fff;
 }
@@ -376,5 +376,38 @@ textarea:focus {
 .shop-name {
   font-size: 14px;
   font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .blog-edit-header,
+  .upload-box,
+  .blog-title,
+  .blog-content,
+  .blog-shop {
+    width: min(100%, 860px);
+    margin-right: auto;
+    margin-left: auto;
+  }
+
+  .blog-edit-header,
+  .upload-box,
+  .blog-title,
+  .blog-content,
+  .blog-shop {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .blog-content textarea {
+    height: clamp(320px, 40dvh, 520px);
+  }
+
+  .shop-dialog {
+    right: 0;
+    left: 0;
+    width: min(100%, 760px);
+    margin: 0 auto;
+    border-radius: 16px 16px 0 0;
+  }
 }
 </style>

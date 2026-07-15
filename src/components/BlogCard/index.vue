@@ -92,4 +92,21 @@ function handleLike() {
     }
   }
 }
+
+@media (min-width: 768px) {
+  .blog-box {
+    width: calc((100% - 32px) / 3);
+    margin-bottom: 18px;
+
+    .blog-title {
+      font-size: 14px;
+    }
+  }
+}
+
+@media (min-width: 1200px) {
+  .blog-box {
+    width: calc((100% - 54px) / 4);
+  }
+}
 </style>

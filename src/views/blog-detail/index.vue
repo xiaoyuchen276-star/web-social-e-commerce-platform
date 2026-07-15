@@ -245,10 +245,10 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .blog-body {
-  height: 85%;
+  height: calc(100% - var(--app-header-height) - var(--app-footer-height));
   overflow-y: scroll;
   overflow-x: hidden;
-  padding-top: 40px;
+  padding-top: 0;
 }
 
 .blog-info-box {
@@ -470,7 +470,8 @@ onMounted(() => {
 
 .blog-foot-bar {
   width: 100%;
-  height: 8%;
+  min-height: var(--app-footer-height);
+  height: var(--app-footer-height);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -496,6 +497,33 @@ onMounted(() => {
     &.liked {
       color: #ff6633;
     }
+  }
+}
+
+@media (min-width: 768px) {
+  .blog-body {
+    width: min(100%, 920px);
+    margin: 0 auto;
+  }
+
+  .blog-info-box {
+    height: clamp(300px, 42vw, 460px);
+  }
+
+  .blog-text,
+  .blog-comments {
+    padding-right: 28px;
+    padding-left: 28px;
+  }
+
+  .shop-basic,
+  .zan-box {
+    width: min(86%, 760px);
+  }
+
+  .blog-foot-bar {
+    padding-right: max(24px, 12%);
+    padding-left: max(24px, 12%);
   }
 }
 </style>

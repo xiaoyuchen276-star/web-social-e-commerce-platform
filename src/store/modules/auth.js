@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     }
     token.value = ''
     sessionStorage.removeItem('token')
+    sessionStorage.removeItem('userInfo')
   }
 
   return {

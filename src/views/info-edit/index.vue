@@ -110,6 +110,17 @@ onMounted(async () => {
   overflow-y: auto;
 }
 
+@media (min-width: 768px) {
+  .edit-container {
+    padding: 20px max(24px, 12%);
+  }
+
+  .info-box {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+}
+
 .divider {
   height: 1px;
   background-color: #e4e4e4;

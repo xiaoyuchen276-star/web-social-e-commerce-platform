@@ -41,7 +41,8 @@ function goBack() {
 
 <style lang="scss" scoped>
 .header {
-  height: 6%;
+  min-height: var(--app-header-height);
+  height: var(--app-header-height);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -66,6 +67,21 @@ function goBack() {
     text-align: right;
     font-size: 16px;
     cursor: pointer;
+  }
+}
+
+@media (min-width: 768px) {
+  .header {
+    padding: 0 24px;
+  }
+
+  .header-left,
+  .header-right {
+    width: 12% !important;
+  }
+
+  .header-title {
+    font-size: 18px !important;
   }
 }
 </style>

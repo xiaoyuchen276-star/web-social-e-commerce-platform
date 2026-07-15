@@ -1,15 +1,74 @@
-// 全局重置样式
+// 全局重置与响应式页面骨架
+:root {
+  --app-header-height: 56px;
+  --app-footer-height: 64px;
+  --page-max-width: 1180px;
+  font-size: 14px;
+}
+
 html {
-  font-size: 12px;
   width: 100%;
+  min-width: 320px;
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
+  min-width: 320px;
+  min-height: 100%;
   margin: 0;
+  color: #1f2329;
+  background: #f4f6f8;
 }
 
-html, body, #app {
-  height: 100%;
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+#app,
+.app-shell {
+  min-height: 100dvh;
+}
+
+.app-shell {
+  width: 100%;
+}
+
+.app-shell > [class$='-container'] {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background: #fff;
+}
+
+// 这些页面使用内部滚动区和底部导航，需要稳定的可用高度。
+.home-container,
+.info-container,
+.other-info-container,
+.info-edit-container,
+.login-container,
+.shop-list-container {
+  height: 100dvh;
+  overflow: hidden;
 }
 
 // Element Plus Tabs 定制
@@ -20,31 +79,35 @@ html, body, #app {
 
 .el-tabs__active-bar {
   height: 4px;
-  background-image: linear-gradient(to right, #F63, #f5b9a2);
+  background-image: linear-gradient(to right, #f63, #f5b9a2);
 }
 
-// Element Plus Rate 评分星星间隙
 .el-rate__icon {
   margin-right: 0;
 }
 
-// 底部导航栏（FootBar 组件使用）
+// 底部导航（FootBar 组件使用）
 .foot {
-  width: 100%;
-  height: 8%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.1);
   position: absolute;
   bottom: 0;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: var(--app-footer-height);
+  height: var(--app-footer-height);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff;
+  box-shadow: 0 -1px 2px 1px rgba(0, 0, 0, 0.1);
 }
 
 .foot .add-btn {
   width: 38px;
   height: 38px;
-  box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.1);
   border-radius: 18px;
+  box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.1);
 }
 
 .foot-box {
@@ -58,14 +121,53 @@ html, body, #app {
 }
 
 .foot-text {
-  font-size: 8px;
   margin-top: -4px;
+  font-size: 10px;
 }
 
-.foot-text, .foot-view {
+.foot-text,
+.foot-view {
   text-align: center;
 }
 
-.active {
+.foot .active {
   color: #ff6633;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --app-header-height: 64px;
+    --app-footer-height: 70px;
+  }
+
+  .app-shell {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .app-shell > [class$='-container'] {
+    width: min(100%, var(--page-max-width));
+    min-height: calc(100dvh - 48px);
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 16px;
+    box-shadow: 0 12px 36px rgba(31, 35, 41, 0.12);
+  }
+
+  .home-container,
+  .info-container,
+  .other-info-container,
+  .info-edit-container,
+  .login-container,
+  .shop-list-container {
+    height: calc(100dvh - 48px);
+  }
+}
+
+@media (min-width: 1200px) {
+  :root {
+    --page-max-width: 1280px;
+  }
 }

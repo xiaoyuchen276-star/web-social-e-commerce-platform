@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
 
 const props = defineProps({
   images: {
@@ -139,6 +139,11 @@ onMounted(() => {
   nextTick(() => {
     updateWidth()
   })
+  window.addEventListener('resize', updateWidth)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateWidth)
 })
 
 defineExpose({ go })
