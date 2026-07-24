@@ -68,24 +68,48 @@
       <!-- 评论区域 -->
       <div class="blog-comments">
         <div class="comments-head">
-          <div>网友评价 <span>（119）</span></div>
-          <div><el-icon><ArrowRight /></el-icon></div>
+          <div>网友评价 <span>（{{ commentTotal }}）</span></div>
+        </div>
+        <div class="comment-editor">
+          <el-input
+            ref="commentInputRef"
+            v-model="commentContent"
+            maxlength="255"
+            placeholder="说说你的看法"
+            show-word-limit
+            type="textarea"
+            :rows="2"
+          />
+          <el-button
+            type="primary"
+            :disabled="!commentContent.trim()"
+            :loading="commentSubmitting"
+            @click="handleCommentSubmit"
+          >
+            发布
+          </el-button>
         </div>
         <div class="comment-list">
-          <div class="comment-box" v-for="i in 3" :key="i">
+          <div v-if="!comments.length && !commentLoading" class="comment-empty">暂无评论，来发表第一条吧</div>
+          <div class="comment-box" v-for="comment in comments" :key="comment.id">
             <div class="comment-icon">
-              <img src="https://p0.meituan.net/userheadpicbackend/57e44d6eba01aad0d8d711788f30a126549507.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0" alt="" />
+              <img :src="comment.user?.icon || '/imgs/icons/default-icon.png'" alt="" />
             </div>
             <div class="comment-info">
-              <div class="comment-user">叶小乙 <span>Lv5</span></div>
-              <div style="display: flex">打分 <el-rate disabled :model-value="4.5" /></div>
-              <div class="comment-text">某平台上买的券，价格可以当工作餐吃，虽然价格便宜，但是这家店一点都没有...</div>
-              <div class="comment-images">
-                <img v-for="j in 4" :key="j" src="https://qcloud.dpfile.com/pc/6T7MfXzx7USPIkSy7jzm40qZSmlHUF2jd-FZUL6WpjE9byagjLlrseWxnl1LcbuSGybIjx5eX6WNgCPvcASYAw.jpg" alt="" />
-              </div>
-              <div>浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5</div>
+              <div class="comment-user">{{ comment.user?.nickName || `用户${comment.userId}` }}</div>
+              <div class="comment-text">{{ comment.content }}</div>
+              <div class="comment-time">{{ formatCommentTime(comment.createTime) }}</div>
             </div>
           </div>
+          <el-button
+            v-if="comments.length < commentTotal"
+            class="comment-more"
+            text
+            :loading="commentLoading"
+            @click="loadMoreComments"
+          >
+            加载更多
+          </el-button>
         </div>
       </div>
 
@@ -99,8 +123,9 @@
         <span :class="{ liked: blog.isLike }">{{ blog.liked }}</span>
       </div>
       <div style="width: 40%"></div>
-      <div class="foot-box-item">
+      <div class="foot-box-item" @click="focusCommentInput">
         <el-icon :size="26"><ChatSquare /></el-icon>
+        <span>{{ commentTotal }}</span>
       </div>
     </div>
   </div>
@@ -111,8 +136,9 @@ import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { getBlogById, getBlogLikes, likeBlog } from '@/api/blog'
+import { createBlogComment, getBlogComments } from '@/api/comment'
 import { getShopById } from '@/api/shop'
-import { getUserMe } from '@/api/user'
+import { getUserById, getUserMe } from '@/api/user'
 import { isFollowed as checkFollowed, follow as followApi } from '@/api/follow'
 import { useSwiper } from '@/hooks/useSwiper'
 import AppHeader from '@/components/AppHeader/index.vue'
@@ -127,6 +153,14 @@ const shop = ref({})
 const likes = ref([])
 const currentUser = ref(null)
 const followed = ref(false)
+const comments = ref([])
+const commentTotal = ref(0)
+const commentCurrent = ref(1)
+const commentLoading = ref(false)
+const commentSubmitting = ref(false)
+const commentContent = ref('')
+const commentInputRef = ref(null)
+const commentUsers = new Map()
 
 const shopRate = computed(() => (shop.value.score || 0) / 10)
 const imageCount = computed(() => blog.value.images?.length || 0)
@@ -148,6 +182,7 @@ async function queryBlogById(id) {
     queryShopById(res.data.shopId)
     queryLikeList(id)
     queryLoginUser()
+    queryComments(id, true)
   } catch (err) {
     ElMessage.error(err)
   }
@@ -172,6 +207,68 @@ async function queryLikeList(id) {
   } catch (err) {
     ElMessage.error(err)
   }
+}
+
+// 查询评论，并补充评论用户的公开信息
+async function queryComments(blogId, reset = false) {
+  if (commentLoading.value) return
+  if (reset) {
+    commentCurrent.value = 1
+  }
+  commentLoading.value = true
+  try {
+    const res = await getBlogComments(blogId, commentCurrent.value)
+    const records = res.data || []
+    const enrichedRecords = await Promise.all(
+      records.map(async comment => {
+        if (!commentUsers.has(comment.userId)) {
+          const userRes = await getUserById(comment.userId)
+          commentUsers.set(comment.userId, userRes.data)
+        }
+        return { ...comment, user: commentUsers.get(comment.userId) }
+      })
+    )
+    comments.value = reset ? enrichedRecords : comments.value.concat(enrichedRecords)
+    commentTotal.value = res.total || 0
+  } catch (err) {
+    ElMessage.error(err)
+  } finally {
+    commentLoading.value = false
+  }
+}
+
+async function loadMoreComments() {
+  commentCurrent.value++
+  await queryComments(blog.value.id)
+}
+
+async function handleCommentSubmit() {
+  const content = commentContent.value.trim()
+  if (!content) return
+  if (!sessionStorage.getItem('token')) {
+    ElMessage.error('请先登录')
+    router.push('/login')
+    return
+  }
+  commentSubmitting.value = true
+  try {
+    await createBlogComment({
+      blogId: blog.value.id,
+      content
+    })
+    commentContent.value = ''
+    await queryComments(blog.value.id, true)
+    blog.value.comments = commentTotal.value
+    ElMessage.success('评论发布成功')
+  } catch (err) {
+    ElMessage.error(err)
+  } finally {
+    commentSubmitting.value = false
+  }
+}
+
+function focusCommentInput() {
+  commentInputRef.value?.focus()
 }
 
 // 点赞
@@ -233,6 +330,12 @@ function toUserPage() {
 // 格式化时间
 function formatTime(b) {
   return b.getFullYear() + '年' + (b.getMonth() + 1) + '月' + b.getDate() + '日 '
+}
+
+function formatCommentTime(value) {
+  if (!value) return ''
+  const date = new Date(value)
+  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
 }
 
 onMounted(() => {
@@ -417,6 +520,33 @@ onMounted(() => {
   margin-top: 15px;
 }
 
+.comment-editor {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+
+  .el-button {
+    flex: 0 0 auto;
+  }
+}
+
+.comment-empty,
+.comment-time {
+  color: #909399;
+  font-size: 12px;
+}
+
+.comment-empty {
+  padding: 24px 0;
+  text-align: center;
+}
+
+.comment-more {
+  display: block;
+  margin: 0 auto;
+}
+
 .comment-box {
   display: flex;
   justify-content: space-between;
@@ -452,6 +582,8 @@ onMounted(() => {
 .comment-text {
   padding: 5px 0;
   font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .comment-images {

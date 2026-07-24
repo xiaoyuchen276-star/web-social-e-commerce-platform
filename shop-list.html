@@ -117,7 +117,10 @@
       },
       queryShops() {
         axios.get("/shop/of/type", {
-            params: this.params
+            params: {
+              typeId: this.params.typeId,
+              current: this.params.current
+            }
           })
           .then(({data}) => {
             if (!data) {

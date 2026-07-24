@@ -144,7 +144,8 @@ async function fileSelected() {
 // 删除图片
 async function deletePic(i) {
   try {
-    await deleteBlogImage(fileList.value[i])
+    const filename = fileList.value[i].replace(/^\/imgs/, '')
+    await deleteBlogImage(filename)
     fileList.value.splice(i, 1)
   } catch (err) {
     ElMessage.error(err)

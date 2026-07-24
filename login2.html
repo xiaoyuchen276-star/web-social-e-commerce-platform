@@ -71,7 +71,7 @@
           this.$message.error("请先确认阅读用户协议！");
           return;
         }
-        axios.post("/user/login", this.form)
+        axios.post("/user/login2", this.form)
           .then(({data}) => {
             if(data){
               // 保存用户信息到session
